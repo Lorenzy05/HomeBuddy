@@ -1,449 +1,451 @@
-# 🏠 HomeBuddy 家庭服务机器人 · 终极版项目方案
+# 🏠 HomeBuddy - Home Service Robot · Ultimate Project Plan
 
-> **版本**：v1.2
-> **更新日期**：2026-07-01
-> **更新说明**：更新采购方式为购买或 3D 打印；精简供电结构；移除手机 App 控制；调整实施计划为任务模块形式。
+> **Version**: v1.2
+> **Date**: 2026-07-01
+> **Updates**: Procurement via purchase or 3D printing; simplified power architecture; removed mobile App control; restructured implementation into task modules.
 
 ---
 
-## 📖 目录
+## 📖 Table of Contents
 
-1. [项目概述](#1-项目概述)
-2. [系统架构](#2-系统架构)
-3. [硬件清单](#3-硬件清单)
-4. [接线方案](#4-接线方案)
-5. [通信协议](#5-通信协议)
-6. [控制方式](#6-控制方式)
-7. [功能模块](#7-功能模块)
-8. [实施任务](#8-实施任务)
-9. [验收标准](#9-验收标准)
-10. [风险与应对](#10-风险与应对)
-11. [后期扩展](#11-后期扩展)
-
-
-## 1. 项目概述
-
-| 项目 | 内容 |
-|------|------|
-| 🏠 项目名称 | **HomeBuddy**（家庭伙伴） |
-| 🎯 定位 | 家庭智能服务机器人 |
-| ✨ 核心功能 | 🗣️ 语音对话 · 👁️ 人脸跟随 · 🎮 遥控控制 · 📦 自动送货 |
-| 🧠 架构 | 树莓派（主脑）+ ESP32-S3（执行器） |
-| 🎛️ 控制方式 | 语音 🎤 + 遥控器 📟（双模） |
-
-### 🧭 设计原则
-
-| 原则 | 说明 |
-|------|------|
-| 🔹 职责分离 | 树莓派管 AI，ESP32 管硬件 |
-| 🔹 有线通信 | UART 串口，稳定可靠 |
-| 🔹 双重控制 | 语音 + 遥控，随时切换 |
-| 🔹 安全优先 | 遥控器随时接管，紧急制动 |
-| 🔹 即插即用 | 音频设备全 USB，无需额外驱动 |
+1. [Project Overview](#1-project-overview)
+2. [System Architecture](#2-system-architecture)
+3. [Hardware List](#3-hardware-list)
+4. [Wiring Scheme](#4-wiring-scheme)
+5. [Communication Protocol](#5-communication-protocol)
+6. [Control Methods](#6-control-methods)
+7. [Function Modules](#7-function-modules)
+8. [Implementation Tasks](#8-implementation-tasks)
+9. [Acceptance Criteria](#9-acceptance-criteria)
+10. [Risks & Mitigations](#10-risks--mitigations)
+11. [Future Extensions](#11-future-extensions)
 
 
-## 2. 系统架构
+## 1. Project Overview
+
+| Item | Description |
+|------|-------------|
+| 🏠 Project Name | **HomeBuddy** |
+| 🎯 Positioning | Home intelligent service robot |
+| ✨ Core Functions | 🗣️ Voice Chat · 👁️ Face Following · 🎮 Remote Control · 📦 Auto Delivery |
+| 🧠 Architecture | Raspberry Pi (Brain) + ESP32-S3 (Executor) |
+| 🎛️ Control Methods | Voice 🎤 + Remote 📟 (Dual Mode) |
+
+### 🧭 Design Principles
+
+| Principle | Description |
+|-----------|-------------|
+| 🔹 Separation of Concerns | Raspberry Pi handles AI, ESP32 handles hardware |
+| 🔹 Wired Communication | UART serial, stable and reliable |
+| 🔹 Dual Control | Voice + Remote, switch anytime |
+| 🔹 Safety First | Remote can take over anytime for emergency stop |
+| 🔹 Plug & Play | All audio devices are USB, no extra drivers needed |
+
+
+## 2. System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      👤 用户交互层                              │
+│                      👤 User Interaction Layer                  │
 │  ┌─────────────────────┐  ┌─────────────────────┐            │
-│  │      🎤 语音控制    │  │     📟 遥控器控制   │            │
-│  │  （自然语言指令）   │  │  （红外物理按键）   │            │
+│  │      🎤 Voice       │  │     📟 Remote       │            │
+│  │     Control         │  │     Control         │            │
+│  │  (Natural Language) │  │  (IR Physical Keys) │            │
 │  └──────────┬──────────┘  └──────────┬──────────┘            │
 │             └────────────┬────────────┘                       │
 └──────────────────────────┼────────────────────────────────────┘
                            │
 ┌──────────────────────────┼────────────────────────────────────┐
 │                          ▼                                     │
-│              🧠 树莓派 4B（主脑 / 8GB）                       │
+│              🧠 Raspberry Pi 4B (Brain / 8GB)                 │
 │  ┌────────────────────────────────────────────────────────┐   │
-│  │  📦 软件功能：                                        │   │
-│  │  🎤 Vosk STT（语音识别）                             │   │
-│  │  🔊 Edge-TTS（语音合成）                             │   │
-│  │  🤖 Ollama（本地 LLM / Gemma 2B）                   │   │
-│  │  👁️ MediaPipe（人脸检测）                            │   │
-│  │  🎯 人脸跟随算法（PID 控制）                         │   │
-│  │  🔄 模式管理（遥控 / 跟随 / 送货）                   │   │
+│  │  📦 Software Functions:                               │   │
+│  │  🎤 Vosk STT (Speech Recognition)                    │   │
+│  │  🔊 Edge-TTS (Speech Synthesis)                      │   │
+│  │  🤖 Ollama (Local LLM / Gemma 2B)                   │   │
+│  │  👁️ MediaPipe (Face Detection)                       │   │
+│  │  🎯 Face Following Algorithm (PID Control)           │   │
+│  │  🔄 Mode Management (Remote / Follow / Delivery)     │   │
 │  └──────────────────┬─────────────────────────────────────┘   │
-│                     │ 🔗 UART 串口（GPIO14/15）                │
-│                     │ 📨 指令协议                             │
-│                     │ 🔋 供电：移动电源（USB-C）              │
+│                     │ 🔗 UART Serial (GPIO14/15)               │
+│                     │ 📨 Command Protocol                     │
+│                     │ 🔋 Power: Power Bank (USB-C)            │
 └─────────────────────┼────────────────────────────────────────┘
                       │
 ┌─────────────────────┼────────────────────────────────────────┐
 │                     ▼                                         │
-│            ⚙️ ESP32-S3（执行器 / 小脑）                       │
+│            ⚙️ ESP32-S3 (Executor / Sub-brain)                 │
 │  ┌────────────────────────────────────────────────────────┐   │
-│  │  🔧 硬件控制：                                        │   │
-│  │  🚗 L298N → 直流电机 ×2（轮子）                      │   │
-│  │  🦾 SG90 舵机 ×3-4（云台 / 托盘 / 头部）            │   │
-│  │  🧭 MPU6050（姿态检测 / 防洒补偿）                   │   │
-│  │  📟 HX1838（红外遥控接收）                           │   │
-│  │  🖥️ OLED SSD1306（表情显示）                         │   │
-│  │  💡 NeoPixel（RGB 状态灯光）                         │   │
-│  │  🔋 ADC（电量监测）                                  │   │
+│  │  🔧 Hardware Control:                                 │   │
+│  │  🚗 L298N → DC Motors ×2 (Wheels)                    │   │
+│  │  🦾 SG90 Servos ×3-4 (Pan-Tilt / Tray / Head)        │   │
+│  │  🧭 MPU6050 (IMU / Anti-spill Compensation)          │   │
+│  │  📟 HX1838 (IR Remote Receiver)                      │   │
+│  │  🖥️ OLED SSD1306 (Face/Expression Display)           │   │
+│  │  💡 NeoPixel (RGB Status LED)                        │   │
+│  │  🔋 ADC (Battery Monitoring)                         │   │
 │  └────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 🎵 音频方案
+### 🎵 Audio Solution
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│              树莓派 USB 音频方案                    │
+│           Raspberry Pi USB Audio Solution           │
 │  ┌───────────────┐    ┌───────────────┐           │
-│  │  🎤 STJF USB  │    │  🔊 双喇叭    │           │
-│  │  麦克风       │    │  USB 音箱     │           │
-│  │  (语音输入)   │    │  (语音输出)   │           │
+│  │  🎤 STJF USB  │    │  🔊 Dual      │           │
+│  │  Microphone   │    │  USB Speaker  │           │
+│  │  (Audio In)   │    │  (Audio Out)  │           │
 │  └───────┬───────┘    └───────┬───────┘           │
 │          │                    │                    │
 │          └────────┬───────────┘                    │
 │                   ▼                                │
 │          ┌─────────────────┐                       │
-│          │  树莓派 USB口   │                       │
-│          │  (即插即用)     │                       │
+│          │  Raspberry Pi   │                       │
+│          │  USB Ports      │                       │
+│          │  (Plug & Play)  │                       │
 │          └─────────────────┘                       │
 └─────────────────────────────────────────────────────┘
 ```
 
 
-## 3. 硬件清单
+## 3. Hardware List
 
-### ✅ 已有硬件
+### ✅ Already Owned
 
-| 组件 | 型号 | 数量 | 状态 |
-|------|------|:----:|:----:|
-| 🧠 主控1 | 树莓派 4B 8GB + 128GB | 1 | ✅ 已有 |
-| ⚙️ 主控2 | ESP32-S3 DevKit | 1 | ✅ 已有 |
-| 📷 摄像头 | USB Webcam 1080P | 1 | ✅ 已有 |
-| 🎤 麦克风 | STJF mini USB 麦克风 | 1 | ✅ 已有 |
-| 🔊 音箱 | 双喇叭 USB 音箱 | 1 | ✅ 已有 |
-| 🔋 移动电源 | Power Bank（USB-C 输出） | 1 | ✅ 已有 |
-| 🦾 舵机 | SG90 9g | 3-4 | ✅ 已有 |
-| 🧭 陀螺仪 | MPU6050 | 1 | ✅ 已有 |
-| 🚗 电机驱动 | L298N | 1 | ✅ 已有 |
-| 🖥️ 显示屏 | OLED SSD1306 128x64 | 1 | ✅ 已有 |
-| 💡 RGB灯 | NeoPixel | 1 | ✅ 已有 |
-| 📟 红外接收 | HX1838 + 遥控器 | 1 | ✅ 已有 |
-| 🎤 麦克风 | INMP441 | 1 | ⚠️ 备用 |
-| 🔊 功放 | MAX98357A | 1 | ⚠️ 备用 |
+| Component | Model | Qty | Status |
+|-----------|-------|:---:|:------:|
+| 🧠 Main Board 1 | Raspberry Pi 4B 8GB + 128GB | 1 | ✅ Owned |
+| ⚙️ Main Board 2 | ESP32-S3 DevKit | 1 | ✅ Owned |
+| 📷 Camera | USB Webcam 1080P | 1 | ✅ Owned |
+| 🎤 Microphone | STJF mini USB Microphone | 1 | ✅ Owned |
+| 🔊 Speaker | Dual Horn USB Speaker | 1 | ✅ Owned |
+| 🔋 Power Bank | Power Bank (USB-C Output) | 1 | ✅ Owned |
+| 🦾 Servo | SG90 9g | 3-4 | ✅ Owned |
+| 🧭 IMU | MPU6050 | 1 | ✅ Owned |
+| 🚗 Motor Driver | L298N | 1 | ✅ Owned |
+| 🖥️ Display | OLED SSD1306 128x64 | 1 | ✅ Owned |
+| 💡 RGB LED | NeoPixel | 1 | ✅ Owned |
+| 📟 IR Receiver | HX1838 + Remote Control | 1 | ✅ Owned |
+| 🎤 Mic (spare) | INMP441 | 1 | ⚠️ Spare |
+| 🔊 Amp (spare) | MAX98357A | 1 | ⚠️ Spare |
 
-### 🆕 需采购（购买或 3D 打印）
+### 🆕 To Purchase (Buy or 3D Print)
 
-| 序号 | 物品 | 规格 | 数量 | 预算 | 备注 |
-|:----:|------|------|:----:|------|------|
-| 1 | 🛞 底盘 | 30×25cm 亚克力 / 3D 打印 | 1 | ¥20-40 | 购买成品或自行打印 |
-| 2 | 🏎️ 橡胶轮 | 直径 8-10cm | 2 | ¥60-100 | 购买 |
-| 3 | 🔄 万向轮 | 金属支架 | 1 | ¥15-20 | 购买 |
-| 4 | 🔋 锂电池组 | 12V 3S 18650（带保护板） | 1 | ¥120-180 | 仅给 L298N + 电机供电 |
-| 5 | 🔩 铜柱螺丝套件 | M2.5 / M3 各种长度 | 1套 | ¥20-30 | 购买 |
-| 6 | 📡 杜邦线套装 | 公/母/母母头 | 1套 | ¥15 | 购买 |
-| 7 | 🔌 USB 延长线 | 公对母 1米 | 1 | ¥10 | 灵活布置摄像头 |
-| 8 | 🎗️ 扎带 + 纳米胶 | 杂 | 1包 | ¥10 | 购买 |
-| 9 | 🖨️ 3D 打印耗材 | PLA / PETG（如需自行打印） | 1卷 | ¥60-100 | 可选 |
+| # | Item | Spec | Qty | Budget | Notes |
+|:-:|------|------|:---:|:------:|-------|
+| 1 | 🛞 Chassis | 30×25cm Acrylic / 3D Printed | 1 | ¥20-40 | Buy or self-print |
+| 2 | 🏎️ Rubber Wheels | Diameter 8-10cm | 2 | ¥60-100 | Purchase |
+| 3 | 🔄 Caster Wheel | Metal bracket | 1 | ¥15-20 | Purchase |
+| 4 | 🔋 LiPo Battery | 12V 3S 18650 (with protection) | 1 | ¥120-180 | Only for L298N + motors |
+| 5 | 🔩 Standoff + Screw Kit | M2.5/M3 various lengths | 1 set | ¥20-30 | Purchase |
+| 6 | 📡 Jumper Wire Set | M/M, M/F, F/F | 1 set | ¥15 | Purchase |
+| 7 | 🔌 USB Extension Cable | Male to Female, 1m | 1 | ¥10 | Flexible camera placement |
+| 8 | 🎗️ Cable Ties + Nano Tape | Assorted | 1 pack | ¥10 | Purchase |
+| 9 | 🖨️ 3D Printing Filament | PLA / PETG (if self-printing) | 1 spool | ¥60-100 | Optional |
 
-**总预算：约 ¥330-555**
-
-
-## 4. 接线方案
-
-### 4.1 🌲 树莓派端
-
-| 接口 | → 连接对象 | 说明 |
-|------|-----------|------|
-| USB-A | 📷 USB Webcam | 视频输入 |
-| USB-A | 🎤 STJF USB 麦克风 | 音频输入（语音识别） |
-| USB-A | 🔊 双喇叭 USB 音箱 | 音频输出（TTS 播报） |
-| USB-C | 🔋 移动电源 | 树莓派供电 |
-| GPIO14 (TX) | ⚙️ ESP32 RX | 串口发送 |
-| GPIO15 (RX) | ⚙️ ESP32 TX | 串口接收 |
-| GND | ⚙️ ESP32 GND | 共地 |
-
-### 4.2 ⚙️ ESP32 端
-
-| 引脚 | → 连接对象 | 说明 |
-|------|-----------|------|
-| UART RX | 🌲 树莓派 TX | 接收指令 |
-| UART TX | 🌲 树莓派 RX | 发送反馈 |
-| GND | 🌲 树莓派 GND | 共地 |
-| GPIO4 | 🚗 L298N IN1 | 左电机 A |
-| GPIO5 | 🚗 L298N IN2 | 左电机 B |
-| GPIO6 | 🚗 L298N IN3 | 右电机 A |
-| GPIO7 | 🚗 L298N IN4 | 右电机 B |
-| GPIO8 (PWM) | 🦾 SG90 舵机1 | 云台左右 |
-| GPIO9 (PWM) | 🦾 SG90 舵机2 | 云台上下 |
-| GPIO10 (PWM) | 🦾 SG90 舵机3 | 托盘补偿 |
-| GPIO13 | 📟 HX1838 OUT | 红外接收 |
-| GPIO21 (SDA) | 🧭 MPU6050 SDA | I2C 数据 |
-| GPIO22 (SCL) | 🧭 MPU6050 SCL | I2C 时钟 |
-| GPIO21 (SDA) | 🖥️ OLED SDA | 与 MPU6050 并联 |
-| GPIO22 (SCL) | 🖥️ OLED SCL | 与 MPU6050 并联 |
-| GPIO48 | 💡 NeoPixel DATA | RGB 指示灯 |
-| GPIO32 (ADC) | 🔋 电池电压采样 | 分压电阻 |
-| VIN (5V) | 🔋 移动电源（USB-A 或 USB-C） | ESP32 供电 |
-
-### 4.3 🔋 供电系统
-
-```
-🔋 移动电源（Power Bank）
-    ├── USB-C → 🌲 树莓派（5V 供电）
-    └── USB-A → ⚙️ ESP32-S3（5V 供电）
-
-🔋 12V 锂电池组（3S 18650，独立供电）
-    └── 🚗 直接 → L298N（电机驱动，12V 输入）
-```
-
-**供电分工**：
-
-| 电源 | 供电对象 | 说明 |
-|------|---------|------|
-| 🔋 移动电源 | 🌲 树莓派 + USB外设 + ⚙️ ESP32 | 5V 输出，稳定供电 |
-| 🔋 12V 锂电池组 | 🚗 L298N + 电机 | 独立供电，大电流不干扰控制电路 |
-
-> ✅ **优点**：树莓派 + ESP32 和电机电源完全隔离，互不干扰，避免电机启动瞬间拉低电压导致主控重启
+**Total Budget: ~¥330-555**
 
 
-## 5. 通信协议
+## 4. Wiring Scheme
 
-### 5.1 🌲 树莓派 → ⚙️ ESP32（指令）
+### 4.1 🌲 Raspberry Pi Side
 
-| 指令格式 | 参数 | 功能 |
-|----------|------|------|
-| `!MOTOR#L{左}#R{右}#END` | -100 ~ 100 | 🚗 两轮差速控制 |
-| `!PAN#{角度}#END` | -90 ~ 90 | 🔄 云台水平旋转 |
-| `!TILT#{角度}#END` | -45 ~ 45 | 🔄 云台俯仰 |
-| `!TRAY#{角度}#END` | -15 ~ 15 | 📦 托盘倾斜补偿 |
-| `!EMOJI#{ID}#END` | 0=😊 1=🎯 2=😢 3=🤖 | 🖥️ 表情切换 |
-| `!RGB#R{红}#G{绿}#B{蓝}#END` | 0~255 | 💡 RGB 灯色 |
-| `!MODE#{模式}#END` | 0=遥控 1=跟随 2=送货 | 🔄 模式切换 |
-| `!STOP#END` | — | 🛑 紧急停止 |
+| Port | → Connected To | Description |
+|------|---------------|-------------|
+| USB-A | 📷 USB Webcam | Video Input |
+| USB-A | 🎤 STJF USB Microphone | Audio Input (Speech Recognition) |
+| USB-A | 🔊 Dual USB Speaker | Audio Output (TTS) |
+| USB-C | 🔋 Power Bank | Raspberry Pi Power |
+| GPIO14 (TX) | ⚙️ ESP32 RX | Serial TX |
+| GPIO15 (RX) | ⚙️ ESP32 TX | Serial RX |
+| GND | ⚙️ ESP32 GND | Common Ground |
 
-### 5.2 ⚙️ ESP32 → 🌲 树莓派（反馈）
+### 4.2 ⚙️ ESP32 Side
 
-| 反馈格式 | 频率 | 功能 |
-|----------|:----:|------|
-| `!IMU#ROLL{角度}#PITCH{角度}#END` | 10Hz | 🧭 姿态数据 |
-| `!BATTERY#{电压}#END` | 1Hz | 🔋 电机电池电压 |
-| `!IR#{按键码}#END` | 事件触发 | 📟 遥控器按键 |
+| Pin | → Connected To | Description |
+|-----|---------------|-------------|
+| UART RX | 🌲 Raspberry Pi TX | Receive Commands |
+| UART TX | 🌲 Raspberry Pi RX | Send Feedback |
+| GND | 🌲 Raspberry Pi GND | Common Ground |
+| GPIO4 | 🚗 L298N IN1 | Left Motor A |
+| GPIO5 | 🚗 L298N IN2 | Left Motor B |
+| GPIO6 | 🚗 L298N IN3 | Right Motor A |
+| GPIO7 | 🚗 L298N IN4 | Right Motor B |
+| GPIO8 (PWM) | 🦾 SG90 Servo 1 | Pan (Left/Right) |
+| GPIO9 (PWM) | 🦾 SG90 Servo 2 | Tilt (Up/Down) |
+| GPIO10 (PWM) | 🦾 SG90 Servo 3 | Tray Compensation |
+| GPIO13 | 📟 HX1838 OUT | IR Receiver |
+| GPIO21 (SDA) | 🧭 MPU6050 SDA | I2C Data |
+| GPIO22 (SCL) | 🧭 MPU6050 SCL | I2C Clock |
+| GPIO21 (SDA) | 🖥️ OLED SDA | Parallel with MPU6050 |
+| GPIO22 (SCL) | 🖥️ OLED SCL | Parallel with MPU6050 |
+| GPIO48 | 💡 NeoPixel DATA | RGB Status LED |
+| GPIO32 (ADC) | 🔋 Battery Voltage Divider | Battery Monitoring |
+| VIN (5V) | 🔋 Power Bank (USB-A or USB-C) | ESP32 Power |
 
-
-## 6. 控制方式
-
-### 🎛️ 双模控制
-
-| 模式 | 触发方式 | 说明 |
-|------|---------|------|
-| 🎮 **遥控模式** | 红外遥控器 | 手动控制移动和云台 |
-| 👁️ **跟随模式** | 语音 / 遥控器切换 | 自动人脸跟随 |
-| 📦 **送货模式** | 语音 "送水给我" | 自动寻人 + 送达 |
-
-### 📟 红外遥控器按键映射（17 键标准版）
-
-| 按键 | 功能 | 优先级 |
-|------|------|:----:|
-| **方向区** | | |
-| ↑ | 🚗 前进 | ⭐⭐⭐ |
-| ↓ | 🚗 后退 | ⭐⭐⭐ |
-| ← | 🔄 左转 | ⭐⭐⭐ |
-| → | 🔄 右转 | ⭐⭐⭐ |
-| **控制区** | | |
-| OK | 🛑 紧急停止 | ⭐⭐⭐ |
-| 0 | 🔄 模式切换（遥控 ↔ 跟随 ↔ 送货） | ⭐⭐ |
-| 1 | 🎯 云台回中 | ⭐⭐ |
-| 2 | 🔄 云台左转 15° | ⭐⭐ |
-| 3 | 🔄 云台右转 15° | ⭐⭐ |
-| 4 | 🔄 云台上仰 15° | ⭐⭐ |
-| 5 | 🔄 云台下俯 15° | ⭐⭐ |
-| **快捷区** | | |
-| 6 | 📦 送货指令 | ⭐⭐ |
-| 7 | 👋 打招呼（TTS："你好呀！"） | ⭐ |
-| 8 | 👁️ 启动人脸跟随 | ⭐⭐ |
-| 9 | 🏠 返回充电位（预留） | ⭐ |
-| \* | ⏩ 加速 | ⭐ |
-| \# | ⏪ 减速 | ⭐ |
-
-### ⚡ 控制优先级
+### 4.3 🔋 Power System
 
 ```
-🥇 最高：遥控器方向键 + OK（任何时候都生效）
-🥈 中等：遥控器功能键
-🥉 正常：语音控制 + 自动跟随
+🔋 Power Bank
+    ├── USB-C → 🌲 Raspberry Pi (5V)
+    └── USB-A → ⚙️ ESP32-S3 (5V)
+
+🔋 12V LiPo Battery Pack (3S 18650, Independent)
+    └── 🚗 Direct → L298N (Motor Driver, 12V Input)
 ```
 
-> 🔒 **安全机制**：按下方向键 → 自动暂停所有自动模式 → 手动接管
+**Power Distribution**:
+
+| Power Source | Powers | Description |
+|--------------|--------|-------------|
+| 🔋 Power Bank | 🌲 Raspberry Pi + USB Peripherals + ⚙️ ESP32 | 5V output, stable |
+| 🔋 12V LiPo Pack | 🚗 L298N + Motors | Independent, high current doesn't干扰 control circuit |
+
+> ✅ **Advantage**: Raspberry Pi + ESP32 power is completely isolated from motors, preventing voltage drops during motor startup that could cause resets.
 
 
-## 7. 功能模块
+## 5. Communication Protocol
 
-| 模块 | 负责芯片 | 功能 | 优先级 |
-|------|---------|------|:----:|
-| 🎤 语音识别 | 树莓派 | STJF USB麦克风 → Vosk STT | 🔴 P0 |
-| 🔊 语音合成 | 树莓派 | Edge-TTS → 双喇叭 USB音箱 | 🔴 P0 |
-| 🤖 智能对话 | 树莓派 | Ollama（Gemma 2B） | 🔴 P0 |
-| 👁️ 人脸检测 | 树莓派 | MediaPipe + USB Webcam | 🔴 P0 |
-| 🎯 人脸跟随 | 树莓派 | PID控制 + 速度映射 | 🔴 P0 |
-| 📟 红外遥控 | ESP32 | HX1838 信号解码 | 🔴 P0 |
-| 🚗 电机控制 | ESP32 | L298N PWM 调速 | 🔴 P0 |
-| 🦾 舵机云台 | ESP32 | SG90 角度控制 | 🔴 P0 |
-| 🔄 模式管理 | 树莓派 | 三模切换逻辑 | 🟡 P1 |
-| 🧭 姿态检测 | ESP32 | MPU6050 读取 | 🟡 P1 |
-| 📦 防洒补偿 | ESP32 | 姿态 → 舵机反向补偿 | 🟡 P1 |
-| 🖥️ 表情显示 | ESP32 | OLED 动态表情 | 🟡 P1 |
-| 💡 状态灯效 | ESP32 | NeoPixel RGB | 🟡 P1 |
-| 🔋 电量监测 | ESP32 | ADC 电压采样 | 🟢 P2 |
+### 5.1 🌲 Raspberry Pi → ⚙️ ESP32 (Commands)
 
-**优先级说明**：
-- 🔴 P0 = 核心功能，必须实现
-- 🟡 P1 = 重要功能，提升体验
-- 🟢 P2 = 锦上添花，后期迭代
+| Command Format | Parameters | Function |
+|----------------|------------|----------|
+| `!MOTOR#L{left}#R{right}#END` | -100 ~ 100 | 🚗 Differential drive control |
+| `!PAN#{angle}#END` | -90 ~ 90 | 🔄 Pan servo control |
+| `!TILT#{angle}#END` | -45 ~ 45 | 🔄 Tilt servo control |
+| `!TRAY#{angle}#END` | -15 ~ 15 | 📦 Tray tilt compensation |
+| `!EMOJI#{ID}#END` | 0=😊 1=🎯 2=😢 3=🤖 | 🖥️ Expression switch |
+| `!RGB#R{red}#G{green}#B{blue}#END` | 0~255 | 💡 RGB LED color |
+| `!MODE#{mode}#END` | 0=Remote 1=Follow 2=Delivery | 🔄 Mode switch |
+| `!STOP#END` | — | 🛑 Emergency stop |
 
+### 5.2 ⚙️ ESP32 → 🌲 Raspberry Pi (Feedback)
 
-## 8. 实施任务
-
-### 🔧 硬件搭建任务
-
-| 序号 | 任务 | 说明 |
-|:----:|------|------|
-| 1 | 🛞 底盘制作 | 购买亚克力板或 3D 打印底盘，尺寸 30×25cm |
-| 2 | 🔩 电机安装 | 固定 L298N + 直流电机 + 轮子到底盘 |
-| 3 | 🧱 分层堆叠 | 铜柱分层固定：底层电池+L298N，中层 ESP32，上层树莓派 |
-| 4 | 📷 摄像头固定 | USB Webcam 安装在舵机云台上 |
-| 5 | 🔌 线路连接 | 按接线方案连接所有硬件（树莓派 + ESP32 + 传感器 + 电机） |
-| 6 | 🔋 供电测试 | 验证移动电源给树莓派/ESP32，锂电池给 L298N |
-| 7 | 📟 红外解码 | 烧录 IRrecv 示例，读取遥控器每个按键的编码值 |
-
-### 💻 软件开发任务（按顺序执行）
-
-| 序号 | 模块 | 说明 |
-|:----:|------|------|
-| 1 | ⚙️ ESP32 串口通信 | 实现 `!MOTOR` / `!PAN` / `!TILT` 等指令解析 |
-| 2 | ⚙️ ESP32 电机测试 | 手动发指令验证 L298N 正反转 |
-| 3 | ⚙️ ESP32 舵机测试 | 手动发指令验证 SG90 角度控制 |
-| 4 | ⚙️ ESP32 红外解码 | 将遥控器按键映射为具体动作 |
-| 5 | ⚙️ ESP32 MPU6050 | 读取姿态数据并通过串口发送给树莓派 |
-| 6 | ⚙️ ESP32 OLED + NeoPixel | 表情切换 + 状态灯效 |
-| 7 | 🌲 树莓派 USB 音频 | 测试录音（麦克风）和播放（音箱） |
-| 8 | 🌲 树莓派 Vosk STT | 离线语音识别，输出识别文字 |
-| 9 | 🌲 树莓派 Edge-TTS | 文字转语音，音箱播报 |
-| 10 | 🌲 树莓派 MediaPipe | USB Webcam 人脸检测（画面框出人脸） |
-| 11 | 🌲 树莓派 人脸跟随 | 计算人脸偏移 → PID → 发 `!MOTOR` 指令给 ESP32 |
-| 12 | 🌲 树莓派 Ollama | 集成本地 LLM 对话能力 |
-| 13 | 🔄 模式管理 | 实现遥控 / 跟随 / 送货三模切换 |
-| 14 | 🧪 全系统联调 | 语音触发 → 人脸跟随 → 送货到达 → TTS 播报 |
-
-### 🧪 测试与调试任务
-
-| 序号 | 任务 | 说明 |
-|:----:|------|------|
-| 1 | 🚗 遥控移动测试 | 遥控器控制前进/后退/转向，检查响应速度 |
-| 2 | 🎯 人脸跟随测试 | 人在前方移动，机器人自动跟随 |
-| 3 | 🗣️ 语音交互测试 | 说"你好" → 识别 → LLM 回复 → TTS 播报 |
-| 4 | 📦 送货场景测试 | 说"送水给我" → 寻人 → 送达 → 语音提示 |
-| 5 | 🧊 防洒测试 | 急刹时观察托盘是否保持水平 |
-| 6 | 🔋 续航测试 | 连续运行，记录电池使用时间 |
-| 7 | 📟 红外遥控干扰测试 | 强光下、不同角度遥控是否灵敏 |
-| 8 | 🎤 语音抗噪测试 | 电机运行时语音识别是否正常 |
+| Feedback Format | Frequency | Function |
+|-----------------|:---------:|----------|
+| `!IMU#ROLL{angle}#PITCH{angle}#END` | 10Hz | 🧭 IMU data |
+| `!BATTERY#{voltage}#END` | 1Hz | 🔋 Motor battery voltage |
+| `!IR#{key_code}#END` | Event | 📟 Remote key press |
 
 
-## 9. 验收标准
+## 6. Control Methods
 
-### ✅ 功能验收
+### 🎛️ Dual Control Modes
 
-| 功能 | 验收条件 | 状态 |
-|------|---------|:----:|
-| 🎮 遥控移动 | 方向键控制前进/后退/转向流畅 | ⬜ 待测 |
-| 🔄 云台控制 | 摄像头平滑旋转 | ⬜ 待测 |
-| 👁️ 人脸检测 | 屏幕框出人脸并显示坐标 | ⬜ 待测 |
-| 🎯 人脸跟随 | 机器人跟随人在房间移动 | ⬜ 待测 |
-| 🎤 语音识别 | STJF 麦克风准确识别中文指令 | ⬜ 待测 |
-| 🔊 语音合成 | 双喇叭音箱播报 TTS 语音清晰 | ⬜ 待测 |
-| 📦 自动送货 | "送水" → 寻人 → 送达 | ⬜ 待测 |
-| 📟 红外遥控 | 所有按键功能正常 | ⬜ 待测 |
-| 🧊 防洒功能 | 急刹时托盘倾斜补偿有效 | ⬜ 待测 |
-| 🖥️ 表情显示 | OLED 切换不同表情 | ⬜ 待测 |
-| 💡 状态灯效 | RGB 灯显示不同颜色状态 | ⬜ 待测 |
-| 🔄 模式切换 | 遥控/跟随/送货 三模切换流畅 | ⬜ 待测 |
-| 🔋 双电源供电 | 移动电源 + 锂电池组同时工作稳定 | ⬜ 待测 |
+| Mode | Trigger | Description |
+|------|---------|-------------|
+| 🎮 **Remote Mode** | IR Remote | Manual control of movement and pan-tilt |
+| 👁️ **Follow Mode** | Voice / Remote toggle | Automatic face following |
+| 📦 **Delivery Mode** | Voice "bring me water" | Auto find person + deliver |
 
-### 📊 性能验收
+### 📟 IR Remote Key Mapping (17-key Standard)
 
-| 指标 | 要求 | 备注 |
-|------|------|------|
-| 🔋 续航时间 | ≥ 2 小时（连续移动） | 锂电池组容量决定 |
-| 🔋 树莓派供电 | 移动电源独立供电 | 不受电机干扰 |
-| 📦 最大载重 | ≥ 500g | 1瓶水 + 零食 |
-| 🏎️ 最大速度 | 0.5 m/s | 家庭安全速度 |
-| ⏱️ 跟随延迟 | < 200ms | 感觉不到卡顿 |
-| 🎤 语音识别率 | > 80% | 安静环境 |
-| 📟 遥控距离 | ≥ 8 米 | 室内足够 |
-| 🔊 音箱音量 | 5米内清晰可闻 | 双喇叭有优势 |
+| Key | Function | Priority |
+|-----|----------|:--------:|
+| **Direction Pad** | | |
+| ↑ | 🚗 Forward | ⭐⭐⭐ |
+| ↓ | 🚗 Backward | ⭐⭐⭐ |
+| ← | 🔄 Turn Left | ⭐⭐⭐ |
+| → | 🔄 Turn Right | ⭐⭐⭐ |
+| **Control Pad** | | |
+| OK | 🛑 Emergency Stop | ⭐⭐⭐ |
+| 0 | 🔄 Mode Switch (Remote ↔ Follow ↔ Delivery) | ⭐⭐ |
+| 1 | 🎯 Pan-Tilt Center | ⭐⭐ |
+| 2 | 🔄 Pan Left 15° | ⭐⭐ |
+| 3 | 🔄 Pan Right 15° | ⭐⭐ |
+| 4 | 🔄 Tilt Up 15° | ⭐⭐ |
+| 5 | 🔄 Tilt Down 15° | ⭐⭐ |
+| **Shortcuts** | | |
+| 6 | 📦 Delivery Command | ⭐⭐ |
+| 7 | 👋 Say Hello (TTS) | ⭐ |
+| 8 | 👁️ Start Face Following | ⭐⭐ |
+| 9 | 🏠 Return to Charging Station (Reserved) | ⭐ |
+| \* | ⏩ Increase Speed | ⭐ |
+| \# | ⏪ Decrease Speed | ⭐ |
 
+### ⚡ Control Priority
 
-## 10. 风险与应对
+```
+🥇 Highest: Remote Direction Keys + OK (always active)
+🥈 Medium: Remote Function Keys
+🥉 Normal: Voice Commands + Auto Following
+```
 
-| ⚠️ 风险 | 📌 影响 | 🛠️ 应对措施 |
-|----------|--------|-------------|
-| 🔋 移动电源输出不足 | 树莓派降频/重启 | 使用支持 5V/3A 输出的移动电源 |
-| 🔋 电机启动拉低电压 | ESP32 重启 | 树莓派/ESP32 与电机电源完全隔离 |
-| 🎤 USB 麦克风延迟 | 语音交互卡顿 | 降低采样率 / 使用 ALSA 低延迟配置 |
-| 🔊 USB 音箱无声 | TTS 播报失败 | 检查 ALSA 默认输出设备配置 |
-| 📡 USB 口不够用 | 外设无法全部插入 | 树莓派4B有4个USB口，刚好够用；或加 USB HUB |
-| 💧 托盘饮料倾倒 | 核心功能失败 | 梯形加减速 + MPU6050 硬件补偿 |
-| 🌀 人脸跟随抖动 | 体验差 | PID 参数调优，降低响应灵敏度 |
-| ☀️ 红外受强光干扰 | 遥控失效 | 避免阳光直射接收头 |
+> 🔒 **Safety Mechanism**: Pressing a direction key → pauses all auto modes → manual takeover
 
 
-## 11. 后期扩展
+## 7. Function Modules
 
-| 功能 | 所需硬件 | 优先级 |
-|------|---------|:----:|
-| 🚧 自动避障 | 超声波传感器 HC-SR04 | ⭐⭐⭐ |
-| 🗺️ 地图构建 | 激光雷达 RPLIDAR | ⭐⭐ |
-| 🔋 自动回充 | 充电座 + 红外引导 | ⭐⭐ |
-| 📹 远程监控 | 摄像头推流（已有） | ⭐⭐⭐ |
-| ✋ 手势识别 | 现有摄像头 | ⭐⭐ |
-| 📦 物体识别 | 现有摄像头 + YOLO | ⭐⭐ |
-| 🌍 多语言支持 | 更换 Vosk 模型 | ⭐ |
+| Module | Chip | Function | Priority |
+|--------|------|----------|:--------:|
+| 🎤 Speech Recognition | RPi | STJF USB Mic → Vosk STT | 🔴 P0 |
+| 🔊 Speech Synthesis | RPi | Edge-TTS → Dual USB Speaker | 🔴 P0 |
+| 🤖 Smart Chat | RPi | Ollama (Gemma 2B) | 🔴 P0 |
+| 👁️ Face Detection | RPi | MediaPipe + USB Webcam | 🔴 P0 |
+| 🎯 Face Following | RPi | PID Control + Speed Mapping | 🔴 P0 |
+| 📟 IR Remote | ESP32 | HX1838 Signal Decoding | 🔴 P0 |
+| 🚗 Motor Control | ESP32 | L298N PWM Speed Control | 🔴 P0 |
+| 🦾 Servo Pan-Tilt | ESP32 | SG90 Angle Control | 🔴 P0 |
+| 🔄 Mode Management | RPi | 3-mode switching logic | 🟡 P1 |
+| 🧭 IMU Sensing | ESP32 | MPU6050 Reading | 🟡 P1 |
+| 📦 Anti-spill | ESP32 | IMU → Servo Compensation | 🟡 P1 |
+| 🖥️ Expression Display | ESP32 | OLED Dynamic Faces | 🟡 P1 |
+| 💡 Status LED | ESP32 | NeoPixel RGB | 🟡 P1 |
+| 🔋 Battery Monitor | ESP32 | ADC Voltage Sampling | 🟢 P2 |
+
+**Priority Legend**:
+- 🔴 P0 = Core functions, must implement
+- 🟡 P1 = Important, improves experience
+- 🟢 P2 = Nice-to-have, future iteration
 
 
-## 📌 附录
+## 8. Implementation Tasks
 
-### A. 音频设备配置要点
+### 🔧 Hardware Build Tasks
 
-| 设备 | 配置方法 |
-|------|---------|
-| 🎤 STJF USB 麦克风 | `arecord -l` 查看设备号，Vosk 中指定 `device` |
-| 🔊 双喇叭 USB 音箱 | `aplay -l` 查看设备号，Pygame 中指定输出设备 |
-| 🎵 音量控制 | `alsamixer` 调整 USB 音箱音量 |
+| # | Task | Description |
+|:-:|------|-------------|
+| 1 | 🛞 Chassis Fabrication | Buy acrylic or 3D print chassis, size 30×25cm |
+| 2 | 🔩 Motor Installation | Mount L298N + DC motors + wheels to chassis |
+| 3 | 🧱 Layer Stacking | Use standoffs: Bottom = battery+L298N, Middle = ESP32, Top = Raspberry Pi |
+| 4 | 📷 Camera Mount | Mount USB Webcam on servo pan-tilt |
+| 5 | 🔌 Wiring | Connect all hardware per wiring scheme |
+| 6 | 🔋 Power Test | Verify Power Bank powers Pi/ESP32, LiPo powers L298N |
+| 7 | 📟 IR Decoding | Flash IRrecv example, read each remote key's code |
 
-**树莓派 USB 音频测试命令**：
+### 💻 Software Development Tasks (In Order)
+
+| # | Module | Description |
+|:-:|--------|-------------|
+| 1 | ⚙️ ESP32 Serial | Implement `!MOTOR` / `!PAN` / `!TILT` command parsing |
+| 2 | ⚙️ ESP32 Motor Test | Manual commands to verify L298N forward/reverse |
+| 3 | ⚙️ ESP32 Servo Test | Manual commands to verify SG90 angle control |
+| 4 | ⚙️ ESP32 IR Decode | Map remote keys to actions |
+| 5 | ⚙️ ESP32 MPU6050 | Read IMU data and send via serial to Raspberry Pi |
+| 6 | ⚙️ ESP32 OLED + NeoPixel | Expression switching + status LED effects |
+| 7 | 🌲 RPi USB Audio | Test recording (mic) and playback (speaker) |
+| 8 | 🌲 RPi Vosk STT | Offline speech recognition |
+| 9 | 🌲 RPi Edge-TTS | Text-to-speech via speaker |
+| 10 | 🌲 RPi MediaPipe | USB Webcam face detection (draw bounding box) |
+| 11 | 🌲 RPi Face Following | Calculate face offset → PID → send `!MOTOR` to ESP32 |
+| 12 | 🌲 RPi Ollama | Integrate local LLM chat capability |
+| 13 | 🔄 Mode Manager | Implement Remote / Follow / Delivery 3-mode switching |
+| 14 | 🧪 Full System Test | Voice trigger → Face follow → Delivery → TTS response |
+
+### 🧪 Testing & Debugging Tasks
+
+| # | Task | Description |
+|:-:|------|-------------|
+| 1 | 🚗 Remote Movement Test | Control forward/backward/turn with remote, check response speed |
+| 2 | 🎯 Face Following Test | Person moves, robot follows automatically |
+| 3 | 🗣️ Voice Interaction Test | Say "hello" → recognition → LLM reply → TTS |
+| 4 | 📦 Delivery Scenario Test | Say "bring me water" → find person → deliver → voice alert |
+| 5 | 🧊 Anti-spill Test | Emergency stop, observe tray stays level |
+| 6 | 🔋 Battery Life Test | Continuous run, record runtime |
+| 7 | 📟 IR Interference Test | Test remote in bright light, at various angles |
+| 8 | 🎤 Audio Noise Test | Voice recognition with motors running |
+
+
+## 9. Acceptance Criteria
+
+### ✅ Functional Acceptance
+
+| Function | Acceptance Criteria | Status |
+|----------|---------------------|:------:|
+| 🎮 Remote Movement | Direction keys control smooth movement | ⬜ Pending |
+| 🔄 Pan-Tilt Control | Camera rotates smoothly | ⬜ Pending |
+| 👁️ Face Detection | Face box drawn on screen with coordinates | ⬜ Pending |
+| 🎯 Face Following | Robot follows person moving around room | ⬜ Pending |
+| 🎤 Speech Recognition | STJF mic accurately recognizes Chinese commands | ⬜ Pending |
+| 🔊 Speech Synthesis | Dual speaker plays TTS clearly | ⬜ Pending |
+| 📦 Auto Delivery | "Bring water" → find person → deliver | ⬜ Pending |
+| 📟 IR Remote | All keys function correctly | ⬜ Pending |
+| 🧊 Anti-spill | Tray compensation effective during sudden stops | ⬜ Pending |
+| 🖥️ Expression Display | OLED switches between expressions | ⬜ Pending |
+| 💡 Status LED | RGB shows different colors for different states | ⬜ Pending |
+| 🔄 Mode Switching | Remote/Follow/Delivery switch smoothly | ⬜ Pending |
+| 🔋 Dual Power | Power Bank + LiPo work stable together | ⬜ Pending |
+
+### 📊 Performance Acceptance
+
+| Metric | Requirement | Notes |
+|--------|-------------|-------|
+| 🔋 Battery Life | ≥ 2 hours (continuous movement) | Depends on LiPo capacity |
+| 🔋 Pi Power | Power Bank independent | No motor interference |
+| 📦 Max Payload | ≥ 500g | 1 bottle of water + snacks |
+| 🏎️ Max Speed | 0.5 m/s | Safe indoor speed |
+| ⏱️ Following Latency | < 200ms | Should not feel laggy |
+| 🎤 Speech Recognition | > 80% accuracy | In quiet environment |
+| 📟 Remote Range | ≥ 8 meters | Sufficient indoors |
+| 🔊 Speaker Volume | Clearly audible at 5 meters | Dual speaker advantage |
+
+
+## 10. Risks & Mitigations
+
+| ⚠️ Risk | 📌 Impact | 🛠️ Mitigation |
+|----------|-----------|----------------|
+| 🔋 Power Bank insufficient output | Pi throttles/reboots | Use Power Bank that supports 5V/3A output |
+| 🔋 Motor startup voltage drop | ESP32 resets | Isolate Pi/ESP32 power from motors |
+| 🎤 USB Mic latency | Voice interaction lag | Lower sample rate / ALSA low-latency config |
+| 🔊 USB Speaker no sound | TTS fails | Check ALSA default output device |
+| 📡 Not enough USB ports | Can't plug all devices | Pi 4B has 4 USB ports, enough; or use USB HUB |
+| 💧 Spilled drink | Core function fails | Ramp up/down speed + MPU6050 hardware compensation |
+| 🌀 Face following jitter | Poor experience | Tune PID parameters, reduce sensitivity |
+| ☀️ IR interference from strong light | Remote fails | Avoid direct sunlight on receiver |
+
+
+## 11. Future Extensions
+
+| Feature | Hardware Needed | Priority |
+|---------|-----------------|:--------:|
+| 🚧 Obstacle Avoidance | HC-SR04 Ultrasonic Sensor | ⭐⭐⭐ |
+| 🗺️ Mapping & Navigation | RPLIDAR Laser Scanner | ⭐⭐ |
+| 🔋 Auto Recharging | Charging Dock + IR Guidance | ⭐⭐ |
+| 📹 Remote Monitoring | Camera streaming (already have) | ⭐⭐⭐ |
+| ✋ Gesture Recognition | Existing Camera | ⭐⭐ |
+| 📦 Object Recognition | Existing Camera + YOLO | ⭐⭐ |
+| 🌍 Multi-language Support | Change Vosk model | ⭐ |
+
+
+## 📌 Appendices
+
+### A. Audio Device Configuration Notes
+
+| Device | Configuration Method |
+|--------|---------------------|
+| 🎤 STJF USB Microphone | `arecord -l` to find device, specify `device` in Vosk |
+| 🔊 Dual USB Speaker | `aplay -l` to find device, specify in Pygame |
+| 🎵 Volume Control | Use `alsamixer` to adjust USB speaker volume |
+
+**Raspberry Pi USB Audio Test Commands**:
 ```bash
-# 测试录音（STJF 麦克风）
+# Test recording (STJF Mic)
 arecord -D plughw:1,0 -d 5 -f S16_LE -r 16000 test.wav
 
-# 测试播放（双喇叭音箱）
+# Test playback (Dual Speaker)
 aplay -D plughw:2,0 test.wav
 ```
 
-### B. 参考资源
+### B. Reference Resources
 
-| 资源 | 链接/说明 |
-|------|----------|
-| Vosk 中文模型 | https://alphacephei.com/vosk/models |
+| Resource | Link / Description |
+|----------|-------------------|
+| Vosk Chinese Model | https://alphacephei.com/vosk/models |
 | Ollama | https://ollama.ai |
 | MediaPipe | https://mediapipe.dev |
-| IRremote 库 | Arduino 库管理器搜索 "IRremote" |
-| ALSA 配置 | `/etc/asound.conf` 设置默认声卡 |
+| IRremote Library | Search "IRremote" in Arduino Library Manager |
+| ALSA Configuration | `/etc/asound.conf` to set default sound card |
 
-### C. 文档版本
+### C. Document Version History
 
-| 版本 | 日期 | 变更 |
-|------|------|------|
-| v1.0 | 2026-07-01 | 初始版本 |
-| v1.1 | 2026-07-01 | 整合 STJF USB麦克风 + 双喇叭USB音箱 + 移动电源 |
-| v1.2 | 2026-07-01 | 采购改为购买或 3D 打印；移除手机 App；精简供电结构；调整实施计划 |
-
-**🏠 HomeBuddy · 让家更智能，让生活更温暖 ❤️**
+| Version | Date | Changes |
+|---------|------|---------|
+| v1.0 | 2026-07-01 | Initial release |
+| v1.1 | 2026-07-01 | Integrated STJF USB mic + Dual USB speaker + Power Bank |
+| v1.2 | 2026-07-01 | Procurement via buy/3D print; removed mobile App; simplified power; restructured tasks |
 
 ---
+
+**🏠 HomeBuddy · Smarter Home, Warmer Life ❤️**
