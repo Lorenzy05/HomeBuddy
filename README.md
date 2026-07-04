@@ -354,6 +354,138 @@
 
 ---
 
+## 🔩 Part 1: Hardware Platform Setup (7 Tasks)
+
+| # | Task | Description | Status |
+|:-:|------|-------------|:------:|
+| 1.1 | Chassis Fabrication | 30×25cm acrylic or 3D printed, mark all mounting holes | ❌ |
+| 1.2 | Motor + Wheel Installation | Mount L298N, 2x DC motors, rubber wheels, caster wheel | ❌ |
+| 1.3 | Layer Stacking | Standoffs: Bottom (battery + L298N), Middle (ESP32), Top (Raspberry Pi) | ❌ |
+| 1.4 | Camera + Pan-Tilt Mount | Mount USB Webcam on SG90 servo pan-tilt | ❌ |
+| 1.5 | Secure All Hardware | Use cable ties + nano tape to secure all modules | ❌ |
+| 1.6 | Power System Test | Power Bank → Pi + ESP32; LiPo → L298N | ❌ |
+| 1.7 | Power-On Verification | All boards LED on, wheels spin freely by hand | ❌ |
+
+---
+
+## ⚙️ Part 2: Executor Firmware Development (8 Tasks)
+
+| # | Task | Description | Status |
+|:-:|------|-------------|:------:|
+| 2.1 | Serial Communication | Raspberry Pi ↔ ESP32 UART, send and receive data | ❌ |
+| 2.2 | Motor Control | `!MOTOR#L50#R50#END` → wheels spin | ❌ |
+| 2.3 | Servo Pan-Tilt | `!PAN#30#END` → servo moves to specified angle | ❌ |
+| 2.4 | OLED Expression | `!EMOJI#1#END` → displays 😊 🎯 😢 🤖 | ❌ |
+| 2.5 | NeoPixel LED | `!RGB#R255#G0#B0#END` → lights up red | ❌ |
+| 2.6 | MPU6050 Reading | Send `!IMU#ROLL#PITCH#END` every 100ms | ❌ |
+| 2.7 | ADC Battery Monitor | Send `!BATTERY#3.7#END` | ❌ |
+| 2.8 | Protocol Documentation | Record all commands in `docs/protocol.md` | ❌ |
+
+---
+
+## 🎮 Part 3: Remote Control (7 Tasks)
+
+| # | Task | Description | Status |
+|:-:|------|-------------|:------:|
+| 3.1 | IR Decoding | Read and record each remote key's code | ❌ |
+| 3.2 | Key Mapping | Map key codes → functions (forward/back/turn/stop/pan-tilt) | ❌ |
+| 3.3 | Direction Control | ↑↓←→ control movement, OK = emergency stop | ❌ |
+| 3.4 | Pan-Tilt Control | 1 = center, 2/3 = pan left/right, 4/5 = tilt up/down | ❌ |
+| 3.5 | Speed Adjustment | \* = speed up, # = slow down, 3 speed levels | ❌ |
+| 3.6 | Priority Mechanism | Pressing direction key → immediately pauses all auto modes | ❌ |
+| 3.7 | Mode Switch | 0 key toggles: Remote ↔ Follow ↔ Delivery | ❌ |
+
+---
+
+## 🧠 Part 4: Raspberry Pi AI Core (8 Tasks)
+
+| # | Task | Description | Status |
+|:-:|------|-------------|:------:|
+| 4.1 | USB Webcam Test | `cv2.VideoCapture(0)` displays image normally | ❌ |
+| 4.2 | Face Detection | MediaPipe draws face box, outputs center coordinates (cx, cy) | ❌ |
+| 4.3 | USB Microphone Test | `arecord` recording test, confirm device ID | ❌ |
+| 4.4 | Speech Recognition (STT) | Vosk offline Chinese recognition | ❌ |
+| 4.5 | USB Speaker Test | `aplay` playback test, confirm device ID | ❌ |
+| 4.6 | Speech Synthesis (TTS) | Edge-TTS → speaker playback | ❌ |
+| 4.7 | Large Language Model | Ollama + Gemma 2B local chat | ❌ |
+| 4.8 | Face Following Algorithm | Face offset → PID → generate `!MOTOR` commands | ❌ |
+
+---
+
+## 🎯 Part 5: System Integration (9 Tasks)
+
+| # | Task | Description | Status |
+|:-:|------|-------------|:------:|
+| 5.1 | Pi ↔ ESP32 Integration | Face following → serial `!MOTOR` → ESP32 executes | ❌ |
+| 5.2 | Face Following Test | Person walks, robot follows | ❌ |
+| 5.3 | Voice → Action | "Turn left" → Pi → ESP32 → left turn | ❌ |
+| 5.4 | Remote → Pi | Press 8 on remote → triggers face following | ❌ |
+| 5.5 | Delivery Scenario | "Bring me water" → find person → follow → arrive → stop → TTS | ❌ |
+| 5.6 | Anti-spill Compensation | Emergency stop → MPU6050 → tray servo counter-compensation | ❌ |
+| 5.7 | 3-Mode Switching | Remote ↔ Follow ↔ Delivery, smooth switching | ❌ |
+| 5.8 | End-to-End Test Script | `test_full.py` runs all features automatically | ❌ |
+| 5.9 | User Manual | Write `docs/user-manual.md` | ❌ |
+
+---
+
+## 🏁 Release: v1.0 Final (5 Tasks)
+
+| # | Task | Description | Status |
+|:-:|------|-------------|:------:|
+| R.1 | Full Regression Test | Re-run all Part 1-5 functionality | ❌ |
+| R.2 | Update README | Add usage instructions + photos | ❌ |
+| R.3 | Update User Manual | Confirm all function descriptions are accurate | ❌ |
+| R.4 | Fix All Known Bugs | Ensure no known issues remain | ❌ |
+| R.5 | Code Cleanup | Remove debug code, add complete comments | ❌ |
+
+---
+
+## 📊 Progress Summary
+
+| Part | Name | Tasks | Tag | Progress |
+|:----:|------|:-----:|-----|:--------:|
+| 1 | 🔩 Hardware Platform | 7 | `v0.1-hardware` | 0 / 7 |
+| 2 | ⚙️ Executor Firmware | 8 | `v0.2-executor` | 0 / 8 |
+| 3 | 🎮 Remote Control | 7 | `v0.3-remote` | 0 / 7 |
+| 4 | 🧠 AI Core | 8 | `v0.4-ai` | 0 / 8 |
+| 5 | 🎯 System Integration | 9 | `v1.0-beta` | 0 / 9 |
+| Release | 🏁 v1.0 Final | 5 | `v1.0` | 0 / 5 |
+| **Total** | | **44** | | **0 / 44** |
+
+---
+
+## 🔄 How to Use This List
+
+```
+1. Start with Part 1, Task 1.1
+2. Complete the task
+3. Change ❌ to ✅
+4. Move to next task
+5. When all tasks in a Part are ✅, run Acceptance Criteria check
+6. If all pass → git tag v0.x-xxx
+7. Move to next Part
+```
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## 9. Acceptance Criteria
 
 ### ✅ Functional Acceptance
