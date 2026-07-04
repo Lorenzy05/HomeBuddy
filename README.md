@@ -1,16 +1,12 @@
 # 🏠 HomeBuddy - Home Service Robot · Ultimate Project Plan
 
-> **Version**: v1.2
-> **Date**: 2026-07-01
-> **Updates**: Procurement via purchase or 3D printing; simplified power architecture; removed mobile App control; restructured implementation into task modules.
-
 ---
 
 ## 📖 Table of Contents
 
 1. [Project Overview](#1-project-overview)
 2. [System Architecture](#2-system-architecture)
-3. [Hardware List](#3-hardware-list)
+3. [Product List](#3-product-list)
 4. [Wiring Scheme](#4-wiring-scheme)
 5. [Communication Protocol](#5-communication-protocol)
 6. [Control Methods](#6-control-methods)
@@ -20,6 +16,7 @@
 10. [Risks & Mitigations](#10-risks--mitigations)
 11. [Future Extensions](#11-future-extensions)
 
+---
 
 ## 1. Project Overview
 
@@ -41,6 +38,7 @@
 | 🔹 Safety First | Remote can take over anytime for emergency stop |
 | 🔹 Plug & Play | All audio devices are USB, no extra drivers needed |
 
+---
 
 ## 2. System Architecture
 
@@ -109,44 +107,49 @@
 └─────────────────────────────────────────────────────┘
 ```
 
+---
 
-## 3. Hardware List
+## 3. Product List
 
-### ✅ Already Owned
+### 📦 Core Electronics
 
-| Component | Model | Qty | Status |
-|-----------|-------|:---:|:------:|
-| 🧠 Main Board 1 | Raspberry Pi 4B 8GB + 128GB | 1 | ✅ Owned |
-| ⚙️ Main Board 2 | ESP32-S3 DevKit | 1 | ✅ Owned |
-| 📷 Camera | USB Webcam 1080P | 1 | ✅ Owned |
-| 🎤 Microphone | STJF mini USB Microphone | 1 | ✅ Owned |
-| 🔊 Speaker | Dual Horn USB Speaker | 1 | ✅ Owned |
-| 🔋 Power Bank | Power Bank (USB-C Output) | 1 | ✅ Owned |
-| 🦾 Servo | SG90 9g | 3-4 | ✅ Owned |
-| 🧭 IMU | MPU6050 | 1 | ✅ Owned |
-| 🚗 Motor Driver | L298N | 1 | ✅ Owned |
-| 🖥️ Display | OLED SSD1306 128x64 | 1 | ✅ Owned |
-| 💡 RGB LED | NeoPixel | 1 | ✅ Owned |
-| 📟 IR Receiver | HX1838 + Remote Control | 1 | ✅ Owned |
-| 🎤 Mic (spare) | INMP441 | 1 | ⚠️ Spare |
-| 🔊 Amp (spare) | MAX98357A | 1 | ⚠️ Spare |
+| # | Component | Model | Qty |
+|:-:|-----------|-------|:---:|
+| 1 | Main Board (Brain) | Raspberry Pi 4B 8GB + 128GB SD | 1 |
+| 2 | Main Board (Executor) | ESP32-S3 DevKit | 1 |
+| 3 | Camera | USB Webcam 1080P | 1 |
+| 4 | Microphone | STJF mini USB Microphone | 1 |
+| 5 | Speaker | Dual Horn USB Speaker | 1 |
+| 6 | Power Bank | USB-C Output (5V/3A) | 1 |
+| 7 | Servo | SG90 9g | 3-4 |
+| 8 | IMU Sensor | MPU6050 | 1 |
+| 9 | Motor Driver | L298N | 1 |
+| 10 | Display | OLED SSD1306 128x64 | 1 |
+| 11 | RGB LED | NeoPixel | 1 |
+| 12 | IR Receiver | HX1838 + Remote Control | 1 |
 
-### 🆕 To Purchase (Buy or 3D Print)
+### 🧩 Structure & Mechanics
 
-| # | Item | Spec | Qty | Budget | Notes |
-|:-:|------|------|:---:|:------:|-------|
-| 1 | 🛞 Chassis | 30×25cm Acrylic / 3D Printed | 1 | ¥20-40 | Buy or self-print |
-| 2 | 🏎️ Rubber Wheels | Diameter 8-10cm | 2 | ¥60-100 | Purchase |
-| 3 | 🔄 Caster Wheel | Metal bracket | 1 | ¥15-20 | Purchase |
-| 4 | 🔋 LiPo Battery | 12V 3S 18650 (with protection) | 1 | ¥120-180 | Only for L298N + motors |
-| 5 | 🔩 Standoff + Screw Kit | M2.5/M3 various lengths | 1 set | ¥20-30 | Purchase |
-| 6 | 📡 Jumper Wire Set | M/M, M/F, F/F | 1 set | ¥15 | Purchase |
-| 7 | 🔌 USB Extension Cable | Male to Female, 1m | 1 | ¥10 | Flexible camera placement |
-| 8 | 🎗️ Cable Ties + Nano Tape | Assorted | 1 pack | ¥10 | Purchase |
-| 9 | 🖨️ 3D Printing Filament | PLA / PETG (if self-printing) | 1 spool | ¥60-100 | Optional |
+| # | Component | Spec | Qty |
+|:-:|-----------|------|:---:|
+| 1 | Chassis | 30×25cm Acrylic / 3D Printed | 1 |
+| 2 | Rubber Wheels | Diameter 8-10cm | 2 |
+| 3 | Caster Wheel | Metal bracket | 1 |
+| 4 | LiPo Battery | 12V 3S 18650 (with protection) | 1 |
+| 5 | Standoff + Screw Kit | M2.5/M3 various lengths | 1 set |
+| 6 | Jumper Wire Set | M/M, M/F, F/F | 1 set |
+| 7 | USB Extension Cable | Male to Female, 1m | 1 |
+| 8 | Cable Ties + Nano Tape | Assorted | 1 pack |
+| 9 | 3D Printing Filament | PLA / PETG (if self-printing) | 1 spool |
 
-**Total Budget: ~¥330-555**
+### 🧪 Spare / Optional
 
+| # | Component | Model | Qty | Note |
+|:-:|-----------|-------|:---:|------|
+| 1 | I2S Microphone | INMP441 | 1 | Spare |
+| 2 | I2S Audio Amp | MAX98357A | 1 | Spare |
+
+---
 
 ## 4. Wiring Scheme
 
@@ -183,7 +186,7 @@
 | GPIO22 (SCL) | 🖥️ OLED SCL | Parallel with MPU6050 |
 | GPIO48 | 💡 NeoPixel DATA | RGB Status LED |
 | GPIO32 (ADC) | 🔋 Battery Voltage Divider | Battery Monitoring |
-| VIN (5V) | 🔋 Power Bank (USB-A or USB-C) | ESP32 Power |
+| VIN (5V) | 🔋 Power Bank (USB-A) | ESP32 Power |
 
 ### 4.3 🔋 Power System
 
@@ -196,15 +199,14 @@
     └── 🚗 Direct → L298N (Motor Driver, 12V Input)
 ```
 
-**Power Distribution**:
-
 | Power Source | Powers | Description |
 |--------------|--------|-------------|
 | 🔋 Power Bank | 🌲 Raspberry Pi + USB Peripherals + ⚙️ ESP32 | 5V output, stable |
-| 🔋 12V LiPo Pack | 🚗 L298N + Motors | Independent, high current doesn't干扰 control circuit |
+| 🔋 12V LiPo Pack | 🚗 L298N + Motors | Independent, high current isolated from control circuit |
 
 > ✅ **Advantage**: Raspberry Pi + ESP32 power is completely isolated from motors, preventing voltage drops during motor startup that could cause resets.
 
+---
 
 ## 5. Communication Protocol
 
@@ -229,6 +231,7 @@
 | `!BATTERY#{voltage}#END` | 1Hz | 🔋 Motor battery voltage |
 | `!IR#{key_code}#END` | Event | 📟 Remote key press |
 
+---
 
 ## 6. Control Methods
 
@@ -236,9 +239,9 @@
 
 | Mode | Trigger | Description |
 |------|---------|-------------|
-| 🎮 **Remote Mode** | IR Remote | Manual control of movement and pan-tilt |
-| 👁️ **Follow Mode** | Voice / Remote toggle | Automatic face following |
-| 📦 **Delivery Mode** | Voice "bring me water" | Auto find person + deliver |
+| 🎮 Remote Mode | IR Remote | Manual control of movement and pan-tilt |
+| 👁️ Follow Mode | Voice / Remote toggle | Automatic face following |
+| 📦 Delivery Mode | Voice "bring me water" | Auto find person + deliver |
 
 ### 📟 IR Remote Key Mapping (17-key Standard)
 
@@ -251,7 +254,7 @@
 | → | 🔄 Turn Right | ⭐⭐⭐ |
 | **Control Pad** | | |
 | OK | 🛑 Emergency Stop | ⭐⭐⭐ |
-| 0 | 🔄 Mode Switch (Remote ↔ Follow ↔ Delivery) | ⭐⭐ |
+| 0 | 🔄 Mode Switch | ⭐⭐ |
 | 1 | 🎯 Pan-Tilt Center | ⭐⭐ |
 | 2 | 🔄 Pan Left 15° | ⭐⭐ |
 | 3 | 🔄 Pan Right 15° | ⭐⭐ |
@@ -261,9 +264,9 @@
 | 6 | 📦 Delivery Command | ⭐⭐ |
 | 7 | 👋 Say Hello (TTS) | ⭐ |
 | 8 | 👁️ Start Face Following | ⭐⭐ |
-| 9 | 🏠 Return to Charging Station (Reserved) | ⭐ |
-| \* | ⏩ Increase Speed | ⭐ |
-| \# | ⏪ Decrease Speed | ⭐ |
+| 9 | 🏠 Return to Charging Station | ⭐ |
+| * | ⏩ Increase Speed | ⭐ |
+| # | ⏪ Decrease Speed | ⭐ |
 
 ### ⚡ Control Priority
 
@@ -275,6 +278,7 @@
 
 > 🔒 **Safety Mechanism**: Pressing a direction key → pauses all auto modes → manual takeover
 
+---
 
 ## 7. Function Modules
 
@@ -300,6 +304,7 @@
 - 🟡 P1 = Important, improves experience
 - 🟢 P2 = Nice-to-have, future iteration
 
+---
 
 ## 8. Implementation Tasks
 
@@ -347,6 +352,7 @@
 | 7 | 📟 IR Interference Test | Test remote in bright light, at various angles |
 | 8 | 🎤 Audio Noise Test | Voice recognition with motors running |
 
+---
 
 ## 9. Acceptance Criteria
 
@@ -381,6 +387,7 @@
 | 📟 Remote Range | ≥ 8 meters | Sufficient indoors |
 | 🔊 Speaker Volume | Clearly audible at 5 meters | Dual speaker advantage |
 
+---
 
 ## 10. Risks & Mitigations
 
@@ -395,6 +402,7 @@
 | 🌀 Face following jitter | Poor experience | Tune PID parameters, reduce sensitivity |
 | ☀️ IR interference from strong light | Remote fails | Avoid direct sunlight on receiver |
 
+---
 
 ## 11. Future Extensions
 
@@ -408,6 +416,7 @@
 | 📦 Object Recognition | Existing Camera + YOLO | ⭐⭐ |
 | 🌍 Multi-language Support | Change Vosk model | ⭐ |
 
+---
 
 ## 📌 Appendices
 
@@ -415,7 +424,7 @@
 
 | Device | Configuration Method |
 |--------|---------------------|
-| 🎤 STJF USB Microphone | `arecord -l` to find device, specify `device` in Vosk |
+| 🎤 STJF USB Microphone | `arecord -l` to find device, specify in Vosk |
 | 🔊 Dual USB Speaker | `aplay -l` to find device, specify in Pygame |
 | 🎵 Volume Control | Use `alsamixer` to adjust USB speaker volume |
 
@@ -445,7 +454,8 @@ aplay -D plughw:2,0 test.wav
 | v1.0 | 2026-07-01 | Initial release |
 | v1.1 | 2026-07-01 | Integrated STJF USB mic + Dual USB speaker + Power Bank |
 | v1.2 | 2026-07-01 | Procurement via buy/3D print; removed mobile App; simplified power; restructured tasks |
+| v1.3 | 2026-07-04 | Product List consolidated: merged Owned + To Purchase + Spare into single list |
 
 ---
 
-**🏠 HomeBuddy · Smarter Home, Warmer Life ❤️**
+**🏠 HomeBuddy · Smarter Home, Warmer Life** ❤️
