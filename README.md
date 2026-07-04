@@ -45,36 +45,36 @@
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                      👤 User Interaction Layer                  │
-│  ┌─────────────────────┐  ┌─────────────────────┐            │
-│  │      🎤 Voice       │  │     📟 Remote       │            │
-│  │     Control         │  │     Control         │            │
-│  │  (Natural Language) │  │  (IR Physical Keys) │            │
-│  └──────────┬──────────┘  └──────────┬──────────┘            │
-│             └────────────┬────────────┘                       │
-└──────────────────────────┼────────────────────────────────────┘
+│  ┌─────────────────────┐  ┌─────────────────────┐               │
+│  │      🎤 Voice       │  │     📟 Remote       │              │
+│  │     Control         │  │     Control         │               │
+│  │  (Natural Language) │  │  (IR Physical Keys) │               │
+│  └──────────┬──────────┘  └──────────┬──────────┘               │
+│             └────────────┬────────────┘                         │
+└──────────────────────────┼──────────────────────────────────────┘
                            │
 ┌──────────────────────────┼────────────────────────────────────┐
-│                          ▼                                     │
+│                          ▼                                    │
 │              🧠 Raspberry Pi 4B (Brain / 8GB)                 │
 │  ┌────────────────────────────────────────────────────────┐   │
-│  │  📦 Software Functions:                               │   │
-│  │  🎤 Vosk STT (Speech Recognition)                    │   │
-│  │  🔊 Edge-TTS (Speech Synthesis)                      │   │
-│  │  🤖 Ollama (Local LLM / Gemma 2B)                   │   │
-│  │  👁️ MediaPipe (Face Detection)                       │   │
-│  │  🎯 Face Following Algorithm (PID Control)           │   │
-│  │  🔄 Mode Management (Remote / Follow / Delivery)     │   │
+│  │  📦 Software Functions:                               │    │
+│  │  🎤 Vosk STT (Speech Recognition)                     │    │
+│  │  🔊 Edge-TTS (Speech Synthesis)                       │    │
+│  │  🤖 Ollama (Local LLM / Gemma 2B)                     │    │
+│  │  👁️ MediaPipe (Face Detection)                        │    │
+│  │  🎯 Face Following Algorithm (PID Control)            │    │
+│  │  🔄 Mode Management (Remote / Follow / Delivery)      │    │ 
 │  └──────────────────┬─────────────────────────────────────┘   │
-│                     │ 🔗 UART Serial (GPIO14/15)               │
+│                     │ 🔗 UART Serial (GPIO14/15)              │
 │                     │ 📨 Command Protocol                     │
 │                     │ 🔋 Power: Power Bank (USB-C)            │
 └─────────────────────┼────────────────────────────────────────┘
                       │
 ┌─────────────────────┼────────────────────────────────────────┐
-│                     ▼                                         │
-│            ⚙️ ESP32-S3 (Executor / Sub-brain)                 │
-│  ┌────────────────────────────────────────────────────────┐   │
-│  │  🔧 Hardware Control:                                 │   │
+│                     ▼                                        │
+│            ⚙️ ESP32-S3 (Executor / Sub-brain)                │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │  🔧 Hardware Control:                                │   │
 │  │  🚗 L298N → DC Motors ×2 (Wheels)                    │   │
 │  │  🦾 SG90 Servos ×3-4 (Pan-Tilt / Tray / Head)        │   │
 │  │  🧭 MPU6050 (IMU / Anti-spill Compensation)          │   │
@@ -82,8 +82,8 @@
 │  │  🖥️ OLED SSD1306 (Face/Expression Display)           │   │
 │  │  💡 NeoPixel (RGB Status LED)                        │   │
 │  │  🔋 ADC (Battery Monitoring)                         │   │
-│  └────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
+│  └────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ### 🎵 Audio Solution
@@ -91,19 +91,19 @@
 ```
 ┌─────────────────────────────────────────────────────┐
 │           Raspberry Pi USB Audio Solution           │
-│  ┌───────────────┐    ┌───────────────┐           │
-│  │  🎤 STJF USB  │    │  🔊 Dual      │           │
-│  │  Microphone   │    │  USB Speaker  │           │
-│  │  (Audio In)   │    │  (Audio Out)  │           │
-│  └───────┬───────┘    └───────┬───────┘           │
-│          │                    │                    │
-│          └────────┬───────────┘                    │
-│                   ▼                                │
-│          ┌─────────────────┐                       │
-│          │  Raspberry Pi   │                       │
-│          │  USB Ports      │                       │
-│          │  (Plug & Play)  │                       │
-│          └─────────────────┘                       │
+│  ┌───────────────┐    ┌───────────────┐             │
+│  │  🎤 STJF USB  │    │  🔊 Dual      │            │
+│  │  Microphone   │    │  USB Speaker  │             │
+│  │  (Audio In)   │    │  (Audio Out)  │             │
+│  └───────┬───────┘    └───────┬───────┘             │
+│          │                    │                     │
+│          └────────┬───────────┘                     │
+│                   ▼                                 │
+│          ┌─────────────────┐                        │
+│          │  Raspberry Pi   │                        │
+│          │  USB Ports      │                        │
+│          │  (Plug & Play)  │                        │
+│          └─────────────────┘                        │
 └─────────────────────────────────────────────────────┘
 ```
 
