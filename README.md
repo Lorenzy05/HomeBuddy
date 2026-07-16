@@ -2,6 +2,8 @@
 
 ---
 
+![Imagination Product](Product.png)
+
 ## 📖 Table of Contents
 
 1. [Project Overview](#1-project-overview)
