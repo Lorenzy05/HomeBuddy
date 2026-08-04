@@ -8,11 +8,15 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 #include <Adafruit_NeoPixel.h>
+#include <math.h>
 
 // ---------- 硬件配置 (竖屏 240 x 320) ----------
 #define TFT_WIDTH   240
 #define TFT_HEIGHT  320
 #define NEOPIXEL_COUNT 1
+
+// ---------- 表情安全边界 ----------
+#define EMOJI_SAFE_MARGIN 60
 
 // ---------- 表情位置结构体 ----------
 struct EmojiPosition {
@@ -51,5 +55,26 @@ void updateEmojiPosition();
 
 // ---------- RGB LED控制 ----------
 void updateNeoPixel(uint8_t r, uint8_t g, uint8_t b);
+
+// ---------- 表情绘制辅助函数 ----------
+void drawVectorFace(int cx, int cy, int expression);
+void drawShinyEye(int x, int y, int r, uint16_t irisColor, uint16_t highlightColor);
+void drawEyebrow(int x, int y, int length, int slope, uint16_t color);
+void drawHappyMouth(int x, int y, int width);
+void drawSharpEye(int x, int y, int r, uint16_t color);
+void drawStraightMouth(int x, int y, int width, uint16_t color);
+void drawTearfulEye(int x, int y, int r);
+void drawSadMouth(int x, int y, int width);
+void drawTeardrop(int x, int y);
+void drawRobotEye(int x, int y, int size);
+void drawAntenna(int x, int y);
+void drawDigitalMouth(int x, int y, int width, int height);
+void drawHeartEye(int x, int y, int size);
+void drawShyMouth(int x, int y, int size);
+void drawMiniHeart(int x, int y, int size);
+void drawCuriousEye(int x, int y, int r);
+void drawSquintEye(int x, int y, int r);
+void drawOMouth(int x, int y, int r);
+void drawThoughtBubble(int x, int y);
 
 #endif

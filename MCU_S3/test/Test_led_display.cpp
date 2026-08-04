@@ -22,7 +22,7 @@ void setup() {
     
     // 初始显示
     showRobotFace(0, statusMessages[0], "No-Touch Standalone");
-    updateNeoPixel(0, 255, 0); // 正常启动绿灯
+    updateNeoPixel(0, 255, 0);
     
     Serial.println("✅ LCD Display OK! Running Demo...");
 }
@@ -38,9 +38,10 @@ void loop() {
         demoStep = (demoStep + 1) % 6;
         currentEmoji = demoStep;
         
-        // 随机移动表情位置，展示灵动感
-        int randomX = random(50, 190);
-        int randomY = random(40, 120);
+        // 使用安全的随机范围 - 确保表情不超出屏幕
+        int margin = 55;
+        int randomX = random(margin, TFT_WIDTH - margin);
+        int randomY = random(margin + 10, 150 - margin);
         moveEmojiTo(randomX, randomY);
         
         // 刷新界面
@@ -48,12 +49,12 @@ void loop() {
         
         // NeoPixel 随表情变色
         switch (currentEmoji) {
-            case 0: updateNeoPixel(0, 255, 0); break;   // 绿色
-            case 1: updateNeoPixel(255, 0, 0); break;   // 红色
-            case 2: updateNeoPixel(0, 0, 255); break;   // 蓝色
-            case 3: updateNeoPixel(255, 255, 0); break; // 黄色
-            case 4: updateNeoPixel(255, 0, 128); break; // 粉色
-            case 5: updateNeoPixel(255, 255, 255); break;// 白色
+            case 0: updateNeoPixel(0, 255, 0); break;   // 绿色 - Happy
+            case 1: updateNeoPixel(255, 0, 0); break;   // 红色 - Focus
+            case 2: updateNeoPixel(0, 0, 255); break;   // 蓝色 - Sad
+            case 3: updateNeoPixel(255, 255, 0); break; // 黄色 - Robot
+            case 4: updateNeoPixel(255, 0, 128); break; // 粉色 - Love
+            case 5: updateNeoPixel(255, 255, 255); break;// 白色 - Think
         }
     }
     
