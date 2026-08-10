@@ -40,4 +40,4 @@ def read_com_port(port='COM8', baudrate=115200, timeout=1):
 
 if __name__ == "__main__":
     # 修改为你的COM端口号
-    read_com_port(port='COM8', baudrate=115200)
+    read_com_port(port='COM10', baudrate=115200)

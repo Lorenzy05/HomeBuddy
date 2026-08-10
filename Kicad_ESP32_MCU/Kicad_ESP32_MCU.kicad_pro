@@ -632,7 +632,7 @@
         "uuid": "de6a28c1-3142-4bac-853f-bf312f7edabc"
       }
     ],
-    "used_designators": "U1",
+    "used_designators": "U1,ESP32\\-S3\\-DEV1",
     "variants": []
   },
   "sheets": [
